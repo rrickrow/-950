@@ -126,6 +126,7 @@ def get_dist_integral(hist_f, i, l_val, dt):
     steps = max(1, int(np.round(l_val / dt)))
     j0    = max(i - steps, 0)
     vals  = hist_f[j0:i+1]               # shape: (steps+1, n)
+    # np.trapezoid is the new name in numpy ≥ 2.0 (np.trapz was deprecated)
     trapz = getattr(np, 'trapezoid', None) or getattr(np, 'trapz', None)
     return trapz(vals, dx=dt, axis=0) if len(vals) > 1 else vals[0] * dt
 
@@ -241,10 +242,11 @@ labels_state = [r"$\mathrm{Re}(m_{1,1})$", r"$\mathrm{Im}(m_{1,1})$",
                 r"$\mathrm{Re}(m_{1,2})$", r"$\mathrm{Im}(m_{1,2})$"]
 state_funcs  = [lambda m: np.real(m[:, 0]), lambda m: np.imag(m[:, 0]),
                 lambda m: np.real(m[:, 1]), lambda m: np.imag(m[:, 1])]
+idx_40s = int(40.0 / dt) + 1   # index corresponding to t = 40 s
 for ax, lbl, sfn in zip(axes.flat, labels_state, state_funcs):
     # Run a short simulation without controller
-    ax.plot(t_arr[:40001], sfn(m1_no)[:40001], 'b',  lw=0.6, label='drive')
-    ax.plot(t_arr[:40001], sfn(m2_no)[:40001], 'r--', lw=0.6, label='response (no ctrl)')
+    ax.plot(t_arr[:idx_40s], sfn(m1_no)[:idx_40s], 'b',  lw=0.6, label='drive')
+    ax.plot(t_arr[:idx_40s], sfn(m2_no)[:idx_40s], 'r--', lw=0.6, label='response (no ctrl)')
     ax.set_xlabel('Time [s]');  ax.set_ylabel(lbl)
     ax.set_xlim(0, 40);  ax.legend(fontsize=7)
     ax.grid(True, alpha=0.3)

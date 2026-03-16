@@ -56,7 +56,9 @@ $$H_\tau = \begin{bmatrix} -0.1075+0.1028j & -0.0869-0.0221j \\ -0.1108-0.0287j 
 |----------|-----------|-------------|----------------------|----------------------|
 | No saturation | 100.0 | 24.15 | 2.72 | 0.86 |
 | Moderate saturation | 5.0 | 7.07 | 0.38 | 1.08 |
-| Heavy saturation | 2.0 | 2.83 | 3.97 | 4.93 |
+| Heavy saturation | 2.0 | 2.83 | 3.97 | **4.93** (diverging) |
+
+> Note: The "no saturation" and "moderate saturation" rows show a decrease in error over time (converging). The "heavy saturation" row shows error growing from 3.97 at t=50s to 4.93 at t=80s—indicating synchronization is lost due to insufficient control authority.
 
 ### 3.2 Key Observations
 

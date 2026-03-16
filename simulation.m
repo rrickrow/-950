@@ -44,16 +44,18 @@ fprintf('Controller gains (KKKtau1 = Gamma*Htau):\n'); disp(Htau_eff);
 n = 2;
 
 % System matrices (matching lmizhong.m parameters)
-A_nom = [0.9, 0; 0, 1.2];                              % alpha1
-B_nom = [2.3, 0; 0, 2.3];                              % beta1
-C_nom = [-0.5+1i, 0.6+0.2i; 1.5-1i, 1.4+2.5i];        % ksai1
-D_nom = [-1.5+3.1i, 1+2.1i; 4+1.1i, 1.1-1i];          % gama1
-E_nom = [-0.1+0.1i, 0.35+1i; 0.3+1.1i, 1.1-1i];       % gama2
+% NOTE: These parameters come from lmizhong.m (alpha1, beta1, ksai1, gama1, gama2).
+%       The Python simulation_sat.py uses the paper's Example 1 parameters for standalone use.
+A_nom = [0.9, 0; 0, 1.2];                              % alpha1 (from lmizhong.m)
+B_nom = [2.3, 0; 0, 2.3];                              % beta1  (from lmizhong.m)
+C_nom = [-0.5+1i, 0.6+0.2i; 1.5-1i, 1.4+2.5i];        % ksai1  (from lmizhong.m)
+D_nom = [-1.5+3.1i, 1+2.1i; 4+1.1i, 1.1-1i];          % gama1  (from lmizhong.m)
+E_nom = [-0.1+0.1i, 0.35+1i; 0.3+1.1i, 1.1-1i];       % gama2  (from lmizhong.m)
 
-% Uncertainty structure
-M1_s = eye(n);  N1_s = 0.2*eye(n);  N2_s = 0.2*eye(n);  % system: A, B
-M2_s = eye(n);  N3_s = 0.3*eye(n);  N4_s = 0.3*eye(n);  % system: C, D, E (0.3 from code)
-K_c  = eye(n);  N_c = 0.5*eye(n);   Nc_tau = 0.5*eye(n);% controller
+% Uncertainty structure (matching lmizhong.m: Na1/Na2=0.2, Nk1/Nk2=0.3)
+M1_s = eye(n);  N1_s = 0.2*eye(n);  N2_s = 0.2*eye(n);  % system: A, B  (Na1, Na2)
+M2_s = eye(n);  N3_s = 0.3*eye(n);  N4_s = 0.3*eye(n);  N5_s = 0.3*eye(n); % system: C, D, E (Nk1, Nk2, Nr)
+K_c  = eye(n);  N_c = 0.5*eye(n);   Nc_tau = 0.5*eye(n);% controller (H1, N1, Ntau1)
 
 % Uncertainty signal functions
 S_func  = @(t) sin(2*t);   % system uncertainty
@@ -170,7 +172,7 @@ for scenario = 1:2
         dB = M1_s * (s_t * N2_s);
         dC = M2_s * (s_t * N3_s);
         dD = M2_s * (s_t * N4_s);
-        dE = M2_s * (s_t * N4_s);
+        dE = M2_s * (s_t * N5_s);   % separate N5_s for E uncertainty
 
         A_t = A_nom + dA;  B_t = B_nom + dB;
         C_t = C_nom + dC;  D_t = D_nom + dD;  E_t = E_nom + dE;
